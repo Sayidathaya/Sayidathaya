@@ -776,11 +776,15 @@ server {
 
 ### 🌍 Website Live
 
+<img width="1919" height="1078" alt="Image" src="https://github.com/user-attachments/assets/dd0b5889-e21a-4fde-abed-afee17c75eaa" />
+
 Aplikasi telah di-deploy dan dapat diakses publik di:
 
 **[https://kampung-ketupat.infinityfree.me/](https://kampung-ketupat.infinityfree.me/)**
 
 ### 📊 Slide Presentasi (PPT / Canva)
+
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/ef72d296-a07f-4052-968d-b9ef78b220bb" />
 
 Slide deck untuk presentasi proyek — berisi overview, arsitektur, fitur utama, screenshot demo, dan rencana pengembangan:
 
@@ -806,11 +810,14 @@ Diagram alur sistem mencakup user flow, admin flow, alur autentikasi, dan arsite
 
 ---
 
-## 👥 Tim & Kontribusi
+## Anggota Tim — Sidang Berapi🔥
 
-Proyek ini dikembangkan sebagai bagian dari program digitalisasi kampung wisata lokal.
-
-Kontribusi, laporan bug, dan saran peningkatan sangat disambut. Silakan buka **Issue** atau **Pull Request** di repositori ini.
+| Nama | NIM | Role |
+|---|---|---|
+| Sayid Rafi A'thaya | 2409116036 | Project Manager 💡 |
+| Mochammad Rezky Ramadhan | 2409116029 | Backend / Supabase ⚙️ |
+| Adella Putri | 2409116006 | Frontend / UI 🎨 |
+| Dhita Olivia Ramadhayanti Kusuma | 2409116040 | Documentation / Report 🧾 |
 
 ---
 
@@ -825,4 +832,3 @@ Kontribusi, laporan bug, dan saran peningkatan sangat disambut. Silakan buka **I
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](https://opensource.org/licenses/MIT)
 
 </div>
-
