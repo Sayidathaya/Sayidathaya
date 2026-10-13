@@ -167,29 +167,33 @@ Setiap jenis dokumen punya controller, model, dan halaman sendiri:
 
 AMS Telkom memakai arsitektur **Monolith**. Frontend dan backend hidup dalam satu proyek, dihubungkan oleh Inertia.js.
 
-```mermaid
-flowchart TD
-    A["🌐 Browser<br/>React + TypeScript"] -->|"Inertia.js"| B
+```text
+   +--------------------------------------+
+   |  BROWSER                             |
+   |  React 19 + TypeScript               |
+   +------------------+-------------------+
+                      |
+                      |  Inertia.js (penghubung)
+                      v
+   +----------------------------------------------------+
+   |  LARAVEL APPLICATION  (Monolith)                   |
+   |                                                    |
+   |   Routes & Middleware  . . . .>  Auth & Permission |
+   |            |                                       |
+   |            v                                       |
+   |   Controllers & Services                           |
+   |            |                                       |
+   |            v                                       |
+   |   Models (Eloquent)                                |
+   +----------------------------------------------------+
 
-    subgraph B["🏢 Laravel Application (Monolith)"]
-        direction TB
-        B1["🛣️ Routes & Middleware"] --> B2["🎮 Controllers & Services"]
-        B2 --> B3["📦 Models (Eloquent)"]
-        B1 -.-> B4["🔐 Auth & Permission"]
-    end
+   Hubungan ke luar:
 
-    B3 --> C[("🗄️ MySQL<br/>Database Utama")]
-    B2 --> D["📜 Google Apps Script<br/>Penomoran Surat/Invoice"]
-    B2 --> E["📊 Google Sheets<br/>Spreadsheet"]
-    B2 --> F["✈️ Telegram Bot API<br/>Notifikasi"]
-    B2 --> G["📄 PhpWord / Dompdf<br/>File Word & PDF"]
-
-    style A fill:#61DAFB,stroke:#333,color:#000
-    style C fill:#4479A1,stroke:#333,color:#fff
-    style D fill:#4285F4,stroke:#333,color:#fff
-    style E fill:#0F9D58,stroke:#333,color:#fff
-    style F fill:#26A5E4,stroke:#333,color:#fff
-    style G fill:#ee2737,stroke:#333,color:#fff
+   Models (Eloquent)        ------>  MySQL               (database utama)
+   Controllers & Services   ------>  Google Apps Script  (penomoran)
+                            ------>  Google Sheets       (spreadsheet)
+                            ------>  Telegram Bot API    (notifikasi)
+                            ------>  PhpWord / Dompdf    (file Word & PDF)
 ```
 
 ### 💡 Apa Arti "Monolith"?
@@ -205,25 +209,29 @@ flowchart TD
 
 ### Contoh: Membuat Surat Masuk Baru
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor U as 👤 Pengguna
-    participant R as ⚛️ React (Form)
-    participant L as 🏢 Laravel
-    participant DB as 🗄️ MySQL
-    participant ST as 💾 Storage
-    participant TG as ✈️ Telegram
-
-    U->>R: Isi form surat masuk + pilih file
-    R->>L: Kirim via Inertia (POST /surat-masuk)
-    L->>L: Middleware auth & verified
-    L->>L: StoreSuratMasukRequest (validasi)
-    L->>ST: Simpan file (disk public)
-    L->>DB: SuratMasuk::create()
-    L->>TG: sendTelegramSuratMasuk() (kirim file + caption)
-    L-->>R: Redirect dengan pesan sukses
-    R-->>U: Tampilkan daftar surat terbaru
+```text
+   [1] Pengguna mengisi form surat masuk + memilih file
+        |
+        v
+   [2] React mengirim lewat Inertia  (POST /surat-masuk)
+        |
+        v
+   [3] Middleware: auth & verified
+        |           \--- gagal ---> redirect ke halaman login
+        v
+   [4] StoreSuratMasukRequest: validasi input
+        |           \--- gagal ---> kembali ke form + pesan error
+        v
+   [5] Simpan file ke Storage (disk public)
+        |
+        v
+   [6] SuratMasuk::create()  ---------> MySQL
+        |
+        v
+   [7] sendTelegramSuratMasuk()  -----> Telegram (file + caption)
+        |
+        v
+   [8] Redirect dengan pesan sukses ---> Pengguna melihat daftar terbaru
 ```
 
 **Penjelasan langkah demi langkah:**
@@ -241,13 +249,25 @@ sequenceDiagram
 
 ### Contoh: Penomoran Surat via Google Apps Script
 
-```mermaid
-flowchart LR
-    A["👤 Pengguna isi form dokumen"] --> B["🏢 Laravel memproses"]
-    B --> C["📡 HTTP POST ke<br/>Google Apps Script"]
-    C --> D["📜 GAS membuat<br/>nomor surat"]
-    D --> E["🏢 Laravel menerima nomor"]
-    E --> F["🗄️ Update kolom no_surat<br/>di MySQL"]
+```text
+   [1] Pengguna mengisi form dokumen
+        |
+        v
+   [2] Laravel memproses request
+        |
+        v
+   [3] Laravel kirim HTTP POST ----------> Google Apps Script
+                                                  |
+                                                  v
+                                           [4] GAS membuat nomor surat
+                                                  |
+        +-----------------------------------------+
+        |
+        v
+   [5] Laravel menerima nomor
+        |
+        v
+   [6] Update kolom no_surat di MySQL
 ```
 
 ### Contoh: Membuat Dokumen SPH
@@ -338,20 +358,17 @@ AMS Telkom menggunakan **MySQL** (bukan SQLite) dengan **Eloquent ORM** dan **mi
 
 Hampir semua dokumen memakai pola yang sama: satu **dokumen utama** dan banyak **item** di dalamnya.
 
-```mermaid
-erDiagram
-    DOKUMEN_UTAMA ||--o{ DOKUMEN_ITEM : "memiliki banyak"
-    DOKUMEN_UTAMA {
-        string nomor_dokumen
-        date tanggal
-        string pihak_terkait
-        string status
-    }
-    DOKUMEN_ITEM {
-        string uraian
-        number kuantitas
-        number nilai
-    }
+```text
+   +-----------------------+                +-----------------------+
+   |    DOKUMEN UTAMA      |                |     DOKUMEN ITEM      |
+   |-----------------------|  1 ------- N   |-----------------------|
+   | nomor_dokumen         |  memiliki      | uraian                |
+   | tanggal               |  banyak        | kuantitas             |
+   | pihak_terkait         |                | nilai                 |
+   | status                |                |                       |
+   +-----------------------+                +-----------------------+
+     contoh: Sph, Spk, Bakn                   contoh: SphItem, SpkItem,
+                                                      BaknItem
 ```
 
 > [!NOTE]
@@ -394,15 +411,23 @@ Dua pertanyaan berbeda, dua alat berbeda:
 | ❓ *"Kamu siapa?"* | **Autentikasi** | Laravel Fortify |
 | ❓ *"Kamu boleh melakukan apa?"* | **Otorisasi** | Spatie Laravel Permission |
 
-```mermaid
-flowchart LR
-    A["🙋 Request masuk"] --> B{"auth?<br/>Sudah login?"}
-    B -- Tidak --> X["🔒 Redirect ke login"]
-    B -- Ya --> C{"verified?<br/>Akun terverifikasi?"}
-    C -- Tidak --> X
-    C -- Ya --> D{"EnsureSegmentAccess<br/>& permission?"}
-    D -- Tidak --> Y["🚫 Akses ditolak"]
-    D -- Ya --> Z["✅ Controller dijalankan"]
+```text
+   Request masuk
+        |
+        v
+   Sudah login?  (auth)
+        |-- Tidak --> Redirect ke halaman login
+        | Ya
+        v
+   Akun terverifikasi?  (verified)
+        |-- Tidak --> Redirect ke halaman login / verifikasi
+        | Ya
+        v
+   Lolos EnsureSegmentAccess & permission?
+        |-- Tidak --> Akses ditolak (403)
+        | Ya
+        v
+   Controller dijalankan
 ```
 
 > [!IMPORTANT]
