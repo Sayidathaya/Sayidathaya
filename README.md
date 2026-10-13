@@ -703,3 +703,76 @@ README ini disusun dari analisis kode. Beberapa hal sebaiknya dicek langsung di 
 *Dibuat dengan ☕, Laravel, dan React*
 
 </div>
+
+
+
+
+
+# Project Overview
+
+Welcome to the AMS Telkom application.
+This application uses Laravel for the backend, Inertia.js for seamless routing, and React + Tailwind CSS for the frontend UI components.
+
+## Requirements
+
+- PHP 8.2+
+- Composer
+- Node.js & npm
+- SQLite (or your preferred database configured in `.env`)
+
+## Installation Guide
+
+1. **Install Backend Dependencies**:
+   ```bash
+   composer install
+   ```
+
+2. **Install Frontend Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Setup Environment Variables**:
+   Copy the `.env.example` file to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   *Make sure you generate the app key if not generated:*
+   ```bash
+   php artisan key:generate
+   ```
+
+4. **Database Setup**:
+   Create a sqlite database file:
+   ```bash
+   touch database/database.sqlite
+   ```
+   Then run the migrations:
+   ```bash
+   php artisan migrate
+   ```
+
+5. **Start Development Servers**:
+   Run the development commands:
+   ```bash
+   composer run dev
+   ```
+   *(This script automatically runs `php artisan serve`, `php artisan queue:listen`, and `npm run dev` in the background).*
+
+---
+
+## Laravel Brain Flow
+
+We use [Laravel Brain](https://github.com/laramint/laravel-brain) for visualizing and analyzing the project architecture (routes, controllers, models, components).
+
+### How to use Laravel Brain
+
+To scan the project and open the interactive graph:
+
+```bash
+php artisan optimize:clear
+php artisan brain:scan
+```
+
+- If you encounter a `Command not found` error, always clear the cache (`php artisan optimize:clear`) first so Laravel can discover the new commands.
+- You can access the viewer at: `http://localhost:8000/_laravel-brain` (or whatever your APP_URL is set to).
