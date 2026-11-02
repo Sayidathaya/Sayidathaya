@@ -69,6 +69,8 @@
 
 Bayangkan sebuah arcade bergaya 8-bit. Di satu sudut ada kode dan data, di sudut lain ada ilustrasi dan animasi, dan di tengahnya ada panggung tempat Sayid berbicara sebagai moderator dan pembawa acara. Semuanya dikumpulkan dalam satu personal portfolio.
 
+LINK WEBSITE: https://sayidportfolio.vercel.app
+
 > [!NOTE]
 > Sayid memadukan **tiga sisi**: teknologi, kreativitas, dan komunikasi. Ketiganya dipelajari berdampingan, bukan terpisah. Kemampuan visual membantu merancang karya digital yang fungsional sekaligus enak dilihat, sedangkan kemampuan komunikasi membantu menyampaikan gagasan dan teknologi dengan jelas.
 
